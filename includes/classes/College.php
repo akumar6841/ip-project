@@ -1,4 +1,6 @@
 <?php
+    require_once('Database.php');
+
 
     class College{
         public $id;
@@ -15,18 +17,58 @@
             $this->user_id = $user_id;
         }
 
-        //FUNCTION TO CREATE COLLEGE
-        public function create_college(){
-            $sql = "INSERT INTO colleges (name, location, user_id, datetime) VALUES ($this->name, $this->location, $this->user_id)";
-            
-            $res = mysqli_query($connection, $sql);
+        //FUNCTION TO GET ALL COLLEGES
+        public static function all(){
+            $connection = Database::get_connection();
 
-            if($res){
-                return true;
+            $sql = "SELECT * FROM colleges";
+
+            $result = Database::select($sql);
+
+            if($result){
+                return $result;
             }else{
-                return false;
+                die("Query failed!!");
+            }
+            
+            
+        }
+
+        //FUNCTION TO CREATE COLLEGE
+        public function create(){
+            $connection = Database::get_connection();
+
+            $sql = "INSERT INTO colleges (name, location, user_id) VALUES ('$this->name', '$this->location', $this->user_id);";
+            
+            $is_inserted = Database::insert($sql);
+
+            if($is_inserted==true){
+                echo "College created successfully!!";
+            }else{
+                $message = Database::get_query_error_message($sql);
+                echo $message;
             }
         }
+
+        //FUNCTION TO UPDATE COLLEGE
+        public static function update($id, $name, $location, $user_id){
+            $connection = Database::get_connection();
+
+            $sql = "UPDATE colleges SET name = '$name', location='$location', user_id='$user_id' WHERE id = $id";
+            
+            $is_updated = Database::update($sql);
+
+            if($is_updated){
+                echo "College update successfully!!";
+            }else{
+                $message = Database::get_query_error_message($sql);
+                echo $message;
+            }
+        }
+
+
+
+
     }
 
 
